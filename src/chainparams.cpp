@@ -57,15 +57,15 @@ public:
         pchMessageStart[1] = 0xe9;
         pchMessageStart[2] = 0x27;
         pchMessageStart[3] = 0x64;
-        vAlertPubKey = ParseHex("04d5212ed0303c64db1840e799d31953eb362fd71d8e742dccd9aa78c4713d6d26b44974b44e2ac71aa38b06ef60c020207b85d270e4bdf8c797f3216f969960dc");
-        nDefaultPort = 1989;
+        vAlertPubKey = ParseHex("04696857e466eba4ea69697c7227b1aefa29e7b67c8a1187f3a93c59332b327ec37865f7f620ec139b6f174afbb3ff487c512fb2c37906b92d48caa3ba85a00114");
+        nDefaultPort = 1990;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
         newTimeRule = 159300;
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
-        eh_epoch_1_endblock = 160010;
-        eh_epoch_2_startblock = 160000;
+        eh_epoch_1_endblock = 200000;
+        eh_epoch_2_startblock = 200001;
 
 
         /**
@@ -99,12 +99,9 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // use name as: echo -n hostname | sha256sum
-        vSeeds.push_back(CDNSSeedData("b8491e7ea3502b8fcda9106923e68b92ef43c331dbf9cfb3c94af473bfbf308b.BTCZ", "btcz.kovach.biz"));
-        vSeeds.push_back(CDNSSeedData("67f534b87f9a2412f845e39102f184e3a48798ed6e2a64d98b915aa12b625e9c.BTCZ", "seed.btcz.life"));
-        vSeeds.push_back(CDNSSeedData("acdd520508bbfa96029867cf64b824fa5e41ebe47918bd4b7855d7a186ed795c.BTCZ", "bzseed.secnode.tk"));
-        vSeeds.push_back(CDNSSeedData("4437c91da6e4c4edca56b57bd52c2e11a3fd7d8b04bd9dec9584fb5220f54b05.BTCZ", "btzseed.blockhub.info"));
-        vSeeds.push_back(CDNSSeedData("0416c4d89c3c4078f7127b7b482c5c242328306f1706fe2edcdb7c94e2fdad45.BTCZ", "seed.btcz.biz"));
-        vSeeds.push_back(CDNSSeedData("e3dca99ba0e7b1d24cca73458f1d67f4014a60565bcf05e5748271922ce897a0.BTCZ", "btczseed.1ds.us"));
+        vSeeds.push_back(CDNSSeedData("2880885f373c66ffbf5eb353ab8213eb259450df996c798214ca1218e28957f2.BTCZ", "bzeseed.secnode.tk"));
+        vSeeds.push_back(CDNSSeedData("9320e28827e4e0ec1aa7f0876fa21fbe92fe2af311b2aabe2f585e73170a7863.BTCZ", "bzeseed.btcz.biz"));
+        
 
 
         // guarantees the first 2 characters, when base58 encoded, are "t1"
@@ -143,13 +140,13 @@ public:
             ( 105841, uint256S("0x000000010305387fd72bc70ce5cc5b512fe513016e7208b9ee61d601fe212991"))  //Dr Hawking, Rest in peace.
             ( 140000, uint256S("0x0000000155f89d1ededf519c6445d41c9240ee4daa721c91c19eea0faa2f02c8"))
             ( 153955, uint256S("0x00000006913d3122f32e60c9d64e87edd8e9a05444447df49713c15fbae6484d"))
-            ( 160011, uint256S("0x0003a9fbed918bdd83fb5d38016189d5b8fe77495d4a7bd2405d3e8a04a62201"))  //18-06-17  8am UTC Hooray for Zhash!
-            ( 166500, uint256S("0x0000002b640d62dd0c2ab68774b05297d2aa72bd63997d3a73ad959963b148d8")),
+            ( 160011, uint256S("0x00000002858c5af3a2e7c511c1b360533bef782361415e8e6515eb5961d88354"))  //BZEdge born
+            ( 165300, uint256S("0x000001f49a3c070be93770e8d7e84b281c159e367d56c809048d02441db1956c")),
 
-            1530166456,     // * UNIX timestamp of last checkpoint block
-            662217,         // * total number of transactions between genesis and last checkpoint
+            1530208401,     // * UNIX timestamp of last checkpoint block
+            647329,         // * total number of transactions between genesis and last checkpoint
                             //   (the tx=... number in the SetBestChain debug.log lines)
-            2290.912865  // * estimated number of transactions per day after checkpoint
+            2255.665481  // * estimated number of transactions per day after checkpoint
                             //   total number of tx / (checkpoint block height / (24 * 24))
         };
 
@@ -179,7 +176,7 @@ public:
         pchMessageStart[2] = 0xf9;
         pchMessageStart[3] = 0xbf;
         vAlertPubKey = ParseHex("048679fb891b15d0cada9692047fd0ae26ad8bfb83fabddbb50334ee5bc0683294deb410be20513c5af6e7b9cec717ade82b27080ee6ef9a245c36a795ab044bb3");
-        nDefaultPort = 11989;
+        nDefaultPort = 11990;
         nPruneAfterHeight = 1000;
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
@@ -275,7 +272,7 @@ public:
         genesis.nNonce = uint256S("0x0000000000000000000000000000000000000000000000000000000000000009");
         genesis.nSolution = ParseHex("05ffd6ad016271ade20cfce093959c3addb2079629f9f123c52ef920caa316531af5af3f");
         consensus.hashGenesisBlock = genesis.GetHash();
-        nDefaultPort = 11989;
+        nDefaultPort = 11990;
         //assert(consensus.hashGenesisBlock == uint256S("0x0575f78ee8dc057deee78ef691876e3be29833aaee5e189bb0459c087451305a"));
         nPruneAfterHeight = 1000;
 
