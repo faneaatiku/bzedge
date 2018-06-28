@@ -130,7 +130,7 @@ protected:
     bool fTestnetToBeDeprecatedFieldRPC = false;
     Checkpoints::CCheckpointData checkpointData;
     std::vector<std::string> vFoundersRewardAddress;
-    int newTimeRule;
+    int newTimeRule=2000000000; //Will remain at this value if not otherwise defined in chain class.
 };
 
 /**
