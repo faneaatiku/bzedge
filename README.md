@@ -1,15 +1,15 @@
-# BitcoinZ
-**Keep running wallet to strengthen the BitcoinZ network. Backup your wallet in many locations & keep your coins wallet offline.**
+# BitcoinZ BZEdge
+**Keep running wallet to strengthen the BZedge network. Backup your wallet in many locations & keep your coins wallet offline. Copy your BitcoinZ walet into BZedge folder. BitcoinZ funds before 17 June 2018 will be duplicated on BZEdge. Replay protection: Send entire amount in each transparent address to a new address (including the free 0.1BZE). Those coins will be replay protected. To protect Z funds from replay, send your "protected" coin to the Z address, then the whole balance in one transaction to the next address.**
 
 ### Ports:
-- RPC port: 1979
-- P2P port: 1989
+- RPC port: 1980
+- P2P port: 1990
 
 Install
 -----------------
 ### Linux
 
-### [Quick guide for beginners](https://github.com/bitcoinz-pod/bitcoinz/wiki/Quick-guide-for-beginners)
+
 
 Get dependencies
 ```{r, engine='bash'}
@@ -23,9 +23,9 @@ Install
 
 ```{r, engine='bash'}
 # Clone Bitcoinz Repository
-git clone https://github.com/btcz/bitcoinz
+git clone https://github.com/bzedge/bzedge.git
 # Build
-cd bitcoinz/
+cd bzedge/
 ./zcutil/build.sh -j$(nproc)
 # fetch key
 ./zcutil/fetch-params.sh
@@ -67,7 +67,7 @@ Create bitcoinz.conf config file and run the application
 ```
 $ docker run -d --name bitcoinz-node \
   -v bitcoinz.conf:/bitcoinz/data/bitcoinz.conf \
-  -p 1989:1989 -p 127.0.0.1:1979:1979 \
+  -p 1990:1990 -p 127.0.0.1:1980:1980 \
   btcz/bitcoinz
 ```
 
@@ -105,4 +105,4 @@ Windows build is maintained in [bitcoinz-win project](https://github.com/bitcoin
 Security Warnings
 -----------------
 
-**BitcoinZ is experimental and a work-in-progress.** Use at your own risk.
+**BZedge is experimental and a work-in-progress.** Use at your own risk.
