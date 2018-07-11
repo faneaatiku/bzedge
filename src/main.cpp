@@ -1424,14 +1424,16 @@ if ( nHeight < 200001 ) nSubsidy = (12500 * COIN);
     else {
         int halvings = (nHeight - 3102400) / consensusParams.nSubsidyHalvingInterval;
         
-        if (halvings >= 64)
-            nSubsidy = 0;
-
         nSubsidy=4 * COIN;
-        nSubsidy >>= halvings;
+        
+        if(nSubsidy >= 64){
+            nSubsidy = 0;
+        }else{
+        	nSubsidy >>= halvings;
+        }
+        
     }
     return nSubsidy;
-
 }
 
 bool IsInitialBlockDownload()
@@ -3025,7 +3027,7 @@ bool CheckBlockHeader(const CBlockHeader& block, CValidationState& state, bool f
                              REJECT_INVALID, "time-too-new");
 
     // starting at height 159300, decrease to 30 minute window to decrease effectiveness of timewarp attack.
-    else if (nHeight >= chainParams.GetNewTimeRule() && block.GetBlockTime() > GetAdjustedTime() + 30 * 60)
+    else if (nHeight >= chainParams.GetNewTimeRule() && block.GetBlockTime() > GetAdjustedTime() + 15 * 60)
         return state.Invalid(error("CheckBlockHeader(): block timestamp too far in the future"),
                              REJECT_INVALID, "time-too-new");
 
