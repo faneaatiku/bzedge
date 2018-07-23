@@ -30,6 +30,39 @@ using namespace std;
  * + Contains no strange transactions
  */
 
+
+/*
+Summary of additional consensus parameters
+mainnnet
+        consensus.fPowNoRetargeting=false;
+        consensus.nLWMAHeight=200000;
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 13772; // hx43 uses k = (N+1)/2 * 0.998 * T 13772
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
+
+testnet
+        consensus.fPowNoRetargeting=false;
+        consensus.nLWMAHeight=20000;
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 13772;
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
+regtest
+        consensus.fPowNoRetargeting=true
+        consensus.nLWMAHeight=-1
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 13772;
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
+*/
+
 const arith_uint256 maxUint = UintToArith256(uint256S("ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"));
 
 
@@ -40,7 +73,7 @@ public:
         strCurrencyUnits = "BTCZ";
         consensus.fCoinbaseMustBeProtected = true;
         consensus.nSubsidySlowStartInterval = 2;
-        consensus.nSubsidyHalvingInterval = 2102400;
+        consensus.nSubsidyHalvingInterval = 2102400;  //4yr with 1 min targeting 
         consensus.nMajorityEnforceBlockUpgrade = 750;
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 4000;
@@ -50,6 +83,17 @@ public:
         consensus.nPowMaxAdjustDown = 34;
         consensus.nPowMaxAdjustUp = 34;
         consensus.nPowTargetSpacing = 2.5 * 60;
+
+        consensus.fPowNoRetargeting=false;
+        consensus.nLWMAHeight=200000;
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 2280;
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
+
+
         /**
          * The message start string should be awesome! ⓩ❤
          */
@@ -61,7 +105,7 @@ public:
         nDefaultPort = 1990;
         nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 100000;
-        newTimeRule = 159300;
+        newTimeRule = 200000;
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
         eh_epoch_1_endblock = 200000;
@@ -170,6 +214,15 @@ public:
         consensus.nMajorityRejectBlockOutdated = 75;
         consensus.nMajorityWindow = 400;
         consensus.powLimit = uint256S("07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+
+        consensus.fPowNoRetargeting=false;
+        consensus.nLWMAHeight=22440;
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 2280;
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         pchMessageStart[0] = 0xfa;
         pchMessageStart[1] = 0x1a;
@@ -183,7 +236,6 @@ public:
         eh_epoch_1_endblock = 30000;
         eh_epoch_2_startblock = 14500;
 
-
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1479443947;
         genesis.nBits = 0x2007ffff;
@@ -195,7 +247,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("978b674532d58328c4da63ab138c476ffa2f8a8b2b5a023a668fd3a97eb7c48b.TZB", "testnetseed.btcz.biz"));
+        vSeeds.push_back(CDNSSeedData("44e5b404748cfd46fcfe1d4db145a4d7e742cd6eb343cb50431e0d2895bf5384.TZB", "testnetseed.bzedge.org"));
         //vSeeds.push_back(CDNSSeedData("rotorproject.org", "test-dnsseed.rotorproject.org")); // Zclassic
 
         // guarantees the first 2 characters, when base58 encoded, are "tm"
@@ -253,6 +305,15 @@ public:
         consensus.nMajorityRejectBlockOutdated = 950;
         consensus.nMajorityWindow = 1000;
         consensus.powLimit = uint256S("0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f0f");
+
+        consensus.fPowNoRetargeting=true;
+        consensus.nLWMAHeight=-1;
+        consensus.nPowLwmaTargetSpacing = 1 * 60;
+        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAdjustedWeight = 2280;
+        consensus.nZawyLwmaMinDenominator = 10;
+        consensus.fZawyLwmaSolvetimeLimitation = true;
+
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.nPowMaxAdjustDown = 0; // Turn off adjustment down
         consensus.nPowMaxAdjustUp = 0; // Turn off adjustment up

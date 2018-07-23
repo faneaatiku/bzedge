@@ -49,6 +49,14 @@ struct Params {
     int64_t AveragingWindowTimespan() const { return nPowAveragingWindow * nPowTargetSpacing; }
     int64_t MinActualTimespan() const { return (AveragingWindowTimespan() * (100 - nPowMaxAdjustUp  )) / 100; }
     int64_t MaxActualTimespan() const { return (AveragingWindowTimespan() * (100 + nPowMaxAdjustDown)) / 100; }
+    //LWMA POW targeting parameters
+    bool fPowNoRetargeting;
+    unsigned int nLWMAHeight;
+    int64_t nPowLwmaTargetSpacing;
+    int64_t nZawyLwmaAveragingWindow;
+    int64_t nZawyLwmaAdjustedWeight;  // k = (N+1)/2 * 0.998 * T
+    int64_t nZawyLwmaMinDenominator;
+    bool fZawyLwmaSolvetimeLimitation;
 };
 } // namespace Consensus
 
