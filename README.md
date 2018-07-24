@@ -22,7 +22,7 @@ sudo apt-get install \
 Install
 
 ```{r, engine='bash'}
-# Clone Bitcoinz Repository
+# Clone BZedge Repository
 git clone https://github.com/bzedge/bzedge.git
 # Build
 cd bzedge/
