@@ -85,9 +85,9 @@ public:
         consensus.nPowTargetSpacing = 2.5 * 60;
 
         consensus.fPowNoRetargeting=false;
-        consensus.nLWMAHeight=200000;
+        consensus.nLWMAHeight=199900;
         consensus.nPowLwmaTargetSpacing = 1 * 60;
-        consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
+        consensus.nZawyLwmaAveragingWindow = 75;
         consensus.nZawyLwmaAdjustedWeight = 2280;
         consensus.nZawyLwmaMinDenominator = 10;
         consensus.fZawyLwmaSolvetimeLimitation = true;
