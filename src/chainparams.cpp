@@ -70,7 +70,7 @@ class CMainParams : public CChainParams {
 public:
     CMainParams() {
         strNetworkID = "main";
-        strCurrencyUnits = "BTCZ";
+        strCurrencyUnits = "BZE";
         consensus.fCoinbaseMustBeProtected = true;
         consensus.nSubsidySlowStartInterval = 2;
         consensus.nSubsidyHalvingInterval = 2102400;  //4yr with 1 min targeting 
@@ -82,7 +82,7 @@ public:
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.nPowMaxAdjustDown = 34;
         consensus.nPowMaxAdjustUp = 34;
-        consensus.nPowTargetSpacing = 2.5 * 60;
+        consensus.nPowTargetSpacing = 2.5 * 60; //no longer for consensus, deprecated in favour of nPowLwmaTargetSpacing and nPowLwmaTargetSpacing. Can be adjusted to 1 min shortly before fork to keep notifications consistent. 
 
         consensus.fPowNoRetargeting=false;
         consensus.nLWMAHeight=199900;
@@ -91,6 +91,7 @@ public:
         consensus.nZawyLwmaAdjustedWeight = 2280;
         consensus.nZawyLwmaMinDenominator = 10;
         consensus.fZawyLwmaSolvetimeLimitation = true;
+        consensus.ZCnPowTargetSpacing = 2.5 * 60; //legacy spacing.
 
 
 
@@ -143,8 +144,8 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // use name as: echo -n hostname | sha256sum
-        vSeeds.push_back(CDNSSeedData("2880885f373c66ffbf5eb353ab8213eb259450df996c798214ca1218e28957f2.BTCZ", "bzeseed.secnode.tk"));
-        vSeeds.push_back(CDNSSeedData("9320e28827e4e0ec1aa7f0876fa21fbe92fe2af311b2aabe2f585e73170a7863.BTCZ", "bzeseed.btcz.biz"));
+        vSeeds.push_back(CDNSSeedData("2880885f373c66ffbf5eb353ab8213eb259450df996c798214ca1218e28957f2.BZE", "bzeseed.secnode.tk"));
+        vSeeds.push_back(CDNSSeedData("9320e28827e4e0ec1aa7f0876fa21fbe92fe2af311b2aabe2f585e73170a7863.BZE", "bzeseed.btcz.biz"));
         
 
 
@@ -209,7 +210,7 @@ class CTestNetParams : public CMainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
-        strCurrencyUnits = "TZB";
+        strCurrencyUnits = "TBZE";
         consensus.nMajorityEnforceBlockUpgrade = 51;
         consensus.nMajorityRejectBlockOutdated = 75;
         consensus.nMajorityWindow = 400;
@@ -222,6 +223,7 @@ public:
         consensus.nZawyLwmaAdjustedWeight = 2280;
         consensus.nZawyLwmaMinDenominator = 10;
         consensus.fZawyLwmaSolvetimeLimitation = true;
+        consensus.ZCnPowTargetSpacing = 2.5 * 60;
 
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         pchMessageStart[0] = 0xfa;
@@ -247,7 +249,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("44e5b404748cfd46fcfe1d4db145a4d7e742cd6eb343cb50431e0d2895bf5384.TZB", "testnetseed.bzedge.org"));
+        vSeeds.push_back(CDNSSeedData("44e5b404748cfd46fcfe1d4db145a4d7e742cd6eb343cb50431e0d2895bf5384.TBZE", "testnetseed.bzedge.org"));
         //vSeeds.push_back(CDNSSeedData("rotorproject.org", "test-dnsseed.rotorproject.org")); // Zclassic
 
         // guarantees the first 2 characters, when base58 encoded, are "tm"
@@ -313,6 +315,7 @@ public:
         consensus.nZawyLwmaAdjustedWeight = 2280;
         consensus.nZawyLwmaMinDenominator = 10;
         consensus.fZawyLwmaSolvetimeLimitation = true;
+        consensus.ZCnPowTargetSpacing = 2.5 * 60;
 
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.nPowMaxAdjustDown = 0; // Turn off adjustment down
