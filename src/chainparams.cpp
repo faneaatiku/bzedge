@@ -82,7 +82,7 @@ public:
         assert(maxUint/UintToArith256(consensus.powLimit) >= consensus.nPowAveragingWindow);
         consensus.nPowMaxAdjustDown = 34;
         consensus.nPowMaxAdjustUp = 34;
-        consensus.nPowTargetSpacing = 2.5 * 60; //no longer for consensus, deprecated in favour of nPowLwmaTargetSpacing and nPowLwmaTargetSpacing. Can be adjusted to 1 min shortly before fork to keep notifications consistent. 
+        consensus.nPowTargetSpacing = 1 * 60; //no longer for consensus, deprecated in favour of nPowLwmaTargetSpacing and nPowLwmaTargetSpacing. Can be adjusted to 1 min shortly before fork to keep notifications consistent. 
 
         consensus.fPowNoRetargeting=false;
         consensus.nLWMAHeight=199900;
@@ -110,7 +110,7 @@ public:
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
         eh_epoch_1_endblock = 200000;
-        eh_epoch_2_startblock = 200001;
+        eh_epoch_2_startblock = 200000;
 
 
         /**
