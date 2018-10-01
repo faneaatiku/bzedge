@@ -9,7 +9,7 @@
 // * Shut down 16 weeks' worth of blocks after the estimated release block height.
 // * A warning is shown during the 2 weeks' worth of blocks prior to shut down.
 static const int APPROX_RELEASE_HEIGHT = 246000;
-static const int WEEKS_UNTIL_DEPRECATION = 16;
+static const int WEEKS_UNTIL_DEPRECATION = 52;
 static const int DEPRECATION_HEIGHT = APPROX_RELEASE_HEIGHT + (WEEKS_UNTIL_DEPRECATION * 7 * 24 * 60); //update to 7*24*60 around fork time
 
 // Number of blocks before deprecation to warn users
