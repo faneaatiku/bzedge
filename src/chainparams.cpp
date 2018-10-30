@@ -144,7 +144,7 @@ public:
         vFixedSeeds.clear();
         vSeeds.clear();
         // use name as: echo -n hostname | sha256sum
-        vSeeds.push_back(CDNSSeedData("2880885f373c66ffbf5eb353ab8213eb259450df996c798214ca1218e28957f2.BZE", "bzeseed.secnode.tk"));
+        vSeeds.push_back(CDNSSeedData("67ef7caf7a2b08c2f0f11460b121bba1090472761a25da0dc839da81e9255425.BZE", "bzeseed.bzedge.org"));
         vSeeds.push_back(CDNSSeedData("9320e28827e4e0ec1aa7f0876fa21fbe92fe2af311b2aabe2f585e73170a7863.BZE", "bzeseed.btcz.biz"));
         
 
