@@ -51,11 +51,13 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
     case TX_NULL_DATA:
         break;
     case TX_PUBKEY:
+    case TX_PUBKEY_REPLAY:
         keyID = CPubKey(vSolutions[0]).GetID();
         if (keystore.HaveKey(keyID))
             return ISMINE_SPENDABLE;
         break;
     case TX_PUBKEYHASH:
+    case TX_PUBKEYHASH_REPLAY:
         keyID = CKeyID(uint160(vSolutions[0]));
         if (keystore.HaveKey(keyID))
             return ISMINE_SPENDABLE;
@@ -72,6 +74,7 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
         break;
     }
     case TX_MULTISIG:
+    case TX_MULTISIG_REPLAY:
     {
         // Only consider transactions "mine" if we own ALL the
         // keys involved. Multi-signature transactions that are

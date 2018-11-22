@@ -83,9 +83,11 @@ static bool SignStep(const BaseSignatureCreator& creator, const CScript& scriptP
     case TX_NULL_DATA:
         return false;
     case TX_PUBKEY:
+    case TX_PUBKEY_REPLAY:
         keyID = CPubKey(vSolutions[0]).GetID();
         return Sign1(keyID, creator, scriptPubKey, scriptSigRet);
     case TX_PUBKEYHASH:
+    case TX_PUBKEYHASH_REPLAY:
         keyID = CKeyID(uint160(vSolutions[0]));
         if (!Sign1(keyID, creator, scriptPubKey, scriptSigRet))
             return false;
@@ -100,6 +102,7 @@ static bool SignStep(const BaseSignatureCreator& creator, const CScript& scriptP
         return creator.KeyStore().GetCScript(uint160(vSolutions[0]), scriptSigRet);
 
     case TX_MULTISIG:
+    case TX_MULTISIG_REPLAY:
         scriptSigRet << OP_0; // workaround CHECKMULTISIG bug
         return (SignN(vSolutions, creator, scriptPubKey, scriptSigRet));
     }
@@ -228,7 +231,9 @@ static CScript CombineSignatures(const CScript& scriptPubKey, const BaseSignatur
             return PushAll(sigs1);
         return PushAll(sigs2);
     case TX_PUBKEY:
+    case TX_PUBKEY_REPLAY:
     case TX_PUBKEYHASH:
+    case TX_PUBKEYHASH_REPLAY:
         // Signatures are bigger than placeholders or empty scripts:
         if (sigs1.empty() || sigs1[0].empty())
             return PushAll(sigs2);
@@ -254,6 +259,7 @@ static CScript CombineSignatures(const CScript& scriptPubKey, const BaseSignatur
             return result;
         }
     case TX_MULTISIG:
+    case TX_MULTISIG_REPLAY:
         return CombineMultisig(scriptPubKey, checker, vSolutions, sigs1, sigs2);
     }
 
