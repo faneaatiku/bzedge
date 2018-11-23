@@ -106,3 +106,17 @@ Security Warnings
 -----------------
 
 **BZedge is experimental and a work-in-progress.** Use at your own risk.
+
+### For MACos use the build/macos branch and make sure you install the following:
+```
+brew install automake autoconf libtool pkg-config
+xcode-select --install
+```
+
+In order to build use build-mac.sh with --disable-libs
+
+```
+./zcutil/build-mac.sh --disable-libs -j$(nproc)
+```
+Some errors have been reported on Mojave OS
+Try installing macOS_SDK_headers_for_macOS_10.14.pkg package from the following location: /Library/Developer/CommandLineTools/Packages/
