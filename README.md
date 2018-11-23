@@ -100,12 +100,8 @@ COPY bitcoinz.conf /bitcoinz/data/bitcoinz.conf
 Then, build with `docker build -t my-bitcoinz .` and run.
 
 ### Windows
-Windows build is maintained in [bitcoinz-win project](https://github.com/bitcoinz-pod/bitcoinz-win).
+Windows build is maintained in [bzedge-win project](https://github.com/BZEdge/bzedge-win).
 
-Security Warnings
------------------
-
-**BZedge is experimental and a work-in-progress.** Use at your own risk.
 
 ### For MACos use the build/macos branch and make sure you install the following:
 ```
@@ -120,3 +116,8 @@ In order to build use build-mac.sh with --disable-libs
 ```
 Some errors have been reported on Mojave OS
 Try installing macOS_SDK_headers_for_macOS_10.14.pkg package from the following location: /Library/Developer/CommandLineTools/Packages/
+
+Security Warnings
+-----------------
+
+**BZedge is experimental and a work-in-progress.** Use at your own risk.
