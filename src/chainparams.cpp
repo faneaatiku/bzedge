@@ -217,7 +217,7 @@ public:
         consensus.powLimit = uint256S("07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
         consensus.fPowNoRetargeting=false;
-        consensus.nLWMAHeight=50;
+        consensus.nLWMAHeight=76;
         consensus.nPowLwmaTargetSpacing = 1 * 60;
         consensus.nZawyLwmaAveragingWindow = 75;  //N=75 recommended by Zawy
         consensus.nZawyLwmaAdjustedWeight = 2280;
@@ -235,8 +235,8 @@ public:
         nPruneAfterHeight = 1000;
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
-        eh_epoch_1_endblock = 50;
-        eh_epoch_2_startblock = 40;
+        eh_epoch_1_endblock = 80;
+        eh_epoch_2_startblock = 76;
 
         //! Modify the testnet genesis block so the timestamp is valid for a later start.
         genesis.nTime = 1479443947;
