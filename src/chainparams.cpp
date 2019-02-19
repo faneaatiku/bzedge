@@ -206,15 +206,24 @@ static CMainParams mainParams;
 /**
  * Testnet (v3)
  */
-class CTestNetParams : public CMainParams {
+class CTestNetParams : public CChainParams {
 public:
     CTestNetParams() {
         strNetworkID = "test";
         strCurrencyUnits = "TBZE";
+
+        consensus.fCoinbaseMustBeProtected = true;
+        consensus.nSubsidySlowStartInterval = 0 ;
+        consensus.nSubsidyHalvingInterval = 10000;
+
         consensus.nMajorityEnforceBlockUpgrade = 51;
         consensus.nMajorityRejectBlockOutdated = 75;
         consensus.nMajorityWindow = 400;
         consensus.powLimit = uint256S("07ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
+		consensus.nPowAveragingWindow = 13;
+		consensus.nPowMaxAdjustDown = 34;
+        consensus.nPowMaxAdjustUp = 34;
+		consensus.nPowTargetSpacing = 1 * 60; //no longer for consensus, deprecated in favour of nPowLwmaTargetSpacing and nPowLwmaTargetSpacing. Can be adjusted to 1 min shortly before fork to keep notifications consistent.
 
         consensus.fPowNoRetargeting=false;
         consensus.nLWMAHeight=76;
@@ -232,7 +241,9 @@ public:
         pchMessageStart[3] = 0xbf;
         vAlertPubKey = ParseHex("048679fb891b15d0cada9692047fd0ae26ad8bfb83fabddbb50334ee5bc0683294deb410be20513c5af6e7b9cec717ade82b27080ee6ef9a245c36a795ab044bb3");
         nDefaultPort = 11990;
+        nMaxTipAge = 24 * 60 * 60;
         nPruneAfterHeight = 1000;
+        newTimeRule = 200000;
         eh_epoch_1 = eh200_9;
         eh_epoch_2 = eh144_5;
         eh_epoch_1_endblock = 80;
@@ -268,7 +279,7 @@ public:
 
         vFixedSeeds.clear();
         vSeeds.clear();
-        vSeeds.push_back(CDNSSeedData("44e5b404748cfd46fcfe1d4db145a4d7e742cd6eb343cb50431e0d2895bf5384.TBZE", "testnetseed.bzedge.org"));
+        //vSeeds.push_back(CDNSSeedData("44e5b404748cfd46fcfe1d4db145a4d7e742cd6eb343cb50431e0d2895bf5384.TBZE", "testnetseed.bzedge.org"));
         //vSeeds.push_back(CDNSSeedData("rotorproject.org", "test-dnsseed.rotorproject.org")); // Zclassic
 
         // guarantees the first 2 characters, when base58 encoded, are "tm"
