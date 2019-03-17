@@ -77,6 +77,14 @@ void ThreadShowMetricsScreen();
  * License: CC BY-SA 3.0
  *
  * Rendering options:
- * Logo: img2txt -W 90 -H 20 -f utf8 -d none -g design.png >> design.ansi
+ * Zcash: img2txt -W 40 -H 20 -f utf8 -d none -g 0.7 Z-yellow.orange-logo.png
+ * Heart: img2txt -W 40 -H 20 -f utf8 -d none 2000px-Heart_corazón.svg.png
  */
-const std::string METRICS_ART = "\n\nBitcoinZ - Your Financial Freedom\n\n";
+const std::string METRICS_ART =
+"\e[1;34m       _/_/_/    _/_/_/_/_/  _/_/_/_/        _/                     \n"
+"      _/    _/        _/    _/          _/_/_/    _/_/_/    _/_/    \n"
+"     _/_/_/        _/      _/_/_/    _/    _/  _/    _/  _/_/_/_/   \n"
+"    _/    _/    _/        _/        _/    _/  _/    _/  _/          \n"
+"   _/_/_/    _/_/_/_/_/  _/_/_/_/    _/_/_/    _/_/_/    _/_/_/     \n"
+"                                                  _/                \n"
+"                                             _/_/                   \e[0m\n";

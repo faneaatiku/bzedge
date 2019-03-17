@@ -1,7 +1,9 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Copyright (c) 2017 The Zcash developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
+
+import sys; assert sys.version_info < (3,), ur"This script does not run under Python 3. Please use Python 2.7.x."
 
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.authproxy import JSONRPCException
@@ -35,19 +37,19 @@ class PaymentDisclosureTest (BitcoinTestFramework):
 
         self.nodes[0].generate(4)
         walletinfo = self.nodes[0].getwalletinfo()
-        assert_equal(walletinfo['immature_balance'], 50000)
+        assert_equal(walletinfo['immature_balance'], 40)
         assert_equal(walletinfo['balance'], 0)
         self.sync_all()
         self.nodes[2].generate(3)
         self.sync_all()
         self.nodes[1].generate(101)
         self.sync_all()
-        assert_equal(self.nodes[0].getbalance(), 50000)
-        assert_equal(self.nodes[1].getbalance(), 12500)
-        assert_equal(self.nodes[2].getbalance(), 37500)
+        assert_equal(self.nodes[0].getbalance(), 40)
+        assert_equal(self.nodes[1].getbalance(), 10)
+        assert_equal(self.nodes[2].getbalance(), 30)
 
         mytaddr = self.nodes[0].getnewaddress()
-        myzaddr = self.nodes[0].z_getnewaddress()
+        myzaddr = self.nodes[0].z_getnewaddress('sprout')
 
         # Check that Node 2 has payment disclosure disabled.
         try:
@@ -65,8 +67,8 @@ class PaymentDisclosureTest (BitcoinTestFramework):
             errorString = e.error['message']
             assert("No information available about transaction" in errorString)
 
-        # Shield coinbase utxos from node 0 of value 50000, standard fee of 0.00010000
-        recipients = [{"address":myzaddr, "amount":Decimal('50000.0')-Decimal('0.0001')}]
+        # Shield coinbase utxos from node 0 of value 40, standard fee of 0.00010000
+        recipients = [{"address":myzaddr, "amount":Decimal('40.0')-Decimal('0.0001')}]
         myopid = self.nodes[0].z_sendmany(mytaddr, recipients)
         txid = wait_and_assert_operationid_status(self.nodes[0], myopid)
 
@@ -157,14 +159,14 @@ class PaymentDisclosureTest (BitcoinTestFramework):
             errorString = e.error['message']
             assert("payment disclosure prefix not found" in errorString)
 
-        # Check that total value of output index 0 and index 1 should equal shielding amount of 50000 less standard fee.
+        # Check that total value of output index 0 and index 1 should equal shielding amount of 40 less standard fee.
         pd = self.nodes[0].z_getpaymentdisclosure(txid, 0, 1)
         result = self.nodes[0].z_validatepaymentdisclosure(pd)
         output_value_sum += Decimal(result["value"])
-        assert_equal(output_value_sum, Decimal('49999.99990000'))
+        assert_equal(output_value_sum, Decimal('39.99990000'))
 
         # Create a z->z transaction, sending shielded funds from node 0 to node 1
-        node1zaddr = self.nodes[1].z_getnewaddress()
+        node1zaddr = self.nodes[1].z_getnewaddress('sprout')
         recipients = [{"address":node1zaddr, "amount":Decimal('1')}]
         myopid = self.nodes[0].z_sendmany(myzaddr, recipients)
         txid = wait_and_assert_operationid_status(self.nodes[0], myopid)

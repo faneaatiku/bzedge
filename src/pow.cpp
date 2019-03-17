@@ -16,11 +16,6 @@
 
 #include "sodium.h"
 
-#ifdef ENABLE_RUST
-#include "librustzcash.h"
-#endif // ENABLE_RUST
-
-
 unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
 {
     // Genesis block / catch undefined block indexes.
@@ -30,15 +25,26 @@ unsigned int GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHead
     int nHeight = pindexLast->nHeight + 1;
 
 //print logging if the block height is larger than LWMA averaging window.
-    if(nHeight>params.nZawyLwmaAveragingWindow){
-    LogPrint("pow", "Zcash Work Required calculation= %d  LWMA calculation = %d\n", ZC_GetNextWorkRequired(pindexLast, pblock, params), LwmaGetNextWorkRequired(pindexLast, pblock, params));
+    if(nHeight > params.nZawyLwmaAveragingWindow) {
+		LogPrint("pow", "Zcash Work Required calculation= %d  LWMA calculation = %d  LWMA-3 calculation = %d\n", ZC_GetNextWorkRequired(pindexLast, pblock, params), LwmaGetNextWorkRequired(pindexLast, pblock, params), Lwma3GetNextWorkRequired(pindexLast, pblock, params));
     }
 
-    if(nHeight<params.nLWMAHeight){
-        return ZC_GetNextWorkRequired(pindexLast, pblock, params);
-    }else{
+    if (nHeight < params.nLWMAHeight)
+    {
+		 LogPrint("pow", "DIFF: using Zcash DigiShield\n");
+		return ZC_GetNextWorkRequired(pindexLast, pblock, params);
+    }
+    else if (nHeight < params.vUpgrades[Consensus::UPGRADE_SAPLING].nActivationHeight)
+    {
+        LogPrint("pow", "DIFF: using LWMA\n");
         return LwmaGetNextWorkRequired(pindexLast, pblock, params);
     }
+    else
+    {
+		LogPrint("pow", "DIFF: using LWMA-3\n");
+		return Lwma3GetNextWorkRequired(pindexLast, pblock, params);
+	}
+
 }
 
 
@@ -46,7 +52,6 @@ unsigned int LwmaGetNextWorkRequired(const CBlockIndex* pindexLast, const CBlock
 {
     return LwmaCalculateNextWorkRequired(pindexLast, params);
 }
-
 
 
 unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexLast, const Consensus::Params& params)
@@ -106,6 +111,59 @@ unsigned int LwmaCalculateNextWorkRequired(const CBlockIndex* pindexLast, const 
 }
 
 
+// LWMA-3 
+unsigned int Lwma3GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
+{
+    return Lwma3CalculateNextWorkRequired(pindexLast, params);
+}
+
+unsigned int Lwma3CalculateNextWorkRequired(const CBlockIndex* pindexLast, const Consensus::Params& params)
+{
+    assert(pindexLast != nullptr);
+    
+    const int64_t T = params.nPowTargetSpacing;
+    const int64_t N = params.nZawyLwmaAveragingWindow;
+    const int64_t k = N * (N + 1) * T / 2;
+    const int64_t height = pindexLast->nHeight;
+    const arith_uint256 powLimit = UintToArith256(params.powLimit);
+    
+    if (height < N) { return powLimit.GetCompact(); }
+
+    arith_uint256 sumTarget, previousDiff, nextTarget;
+    int64_t thisTimestamp, previousTimestamp;
+    int64_t t = 0, j = 0, solvetimeSum = 0;
+
+    const CBlockIndex* blockPreviousTimestamp = pindexLast->GetAncestor(height - N);
+    previousTimestamp = blockPreviousTimestamp->GetBlockTime();
+
+    // Loop through N most recent blocks. 
+    for (int64_t i = height - N + 1; i <= height; i++) {
+        const CBlockIndex* block = pindexLast->GetAncestor(i);
+        thisTimestamp = (block->GetBlockTime() > previousTimestamp) ? block->GetBlockTime() : previousTimestamp + 1;
+
+        int64_t solvetime = std::min(6 * T, thisTimestamp - previousTimestamp);
+        previousTimestamp = thisTimestamp;
+
+        j++;
+        t += solvetime * j; // Weighted solvetime sum.
+        arith_uint256 target;
+        target.SetCompact(block->nBits);
+        sumTarget += target / (k * N);
+
+        if (i > height - 3) { solvetimeSum += solvetime; } // deprecated
+        if (i == height) { previousDiff = target.SetCompact(block->nBits); }
+    }
+
+    nextTarget = t * sumTarget;
+    
+    if (nextTarget > (previousDiff * 150) / 100) { nextTarget = (previousDiff * 150) / 100; }
+    if ((previousDiff * 67) / 100 > nextTarget) { nextTarget = (previousDiff * 67)/100; }
+    if (solvetimeSum < (8 * T) / 10) { nextTarget = previousDiff * 100 / 106; }
+    if (nextTarget > powLimit) { nextTarget = powLimit; }
+
+    return nextTarget.GetCompact();
+}
+
 
 //Orig Zcash function
 unsigned int ZC_GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockHeader *pblock, const Consensus::Params& params)
@@ -116,6 +174,20 @@ unsigned int ZC_GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockH
     // Genesis block
     if (pindexLast == NULL)
         return nProofOfWorkLimit;
+
+    {
+        // Comparing to pindexLast->nHeight with >= because this function
+        // returns the work required for the block after pindexLast.
+        if (params.nPowAllowMinDifficultyBlocksAfterHeight != boost::none &&
+            pindexLast->nHeight >= params.nPowAllowMinDifficultyBlocksAfterHeight.get())
+        {
+            // Special difficulty rule for testnet:
+            // If the new block's timestamp is more than 6 * 2.5 minutes
+            // then allow mining of a min-difficulty block.
+            if (pblock && pblock->GetBlockTime() > pindexLast->GetBlockTime() + params.nPowTargetSpacing * 6)
+                return nProofOfWorkLimit;
+        }
+    }
 
     // Find the first block in the averaging interval
     const CBlockIndex* pindexFirst = pindexLast;
@@ -136,7 +208,6 @@ unsigned int ZC_GetNextWorkRequired(const CBlockIndex* pindexLast, const CBlockH
     return ZC_CalculateNextWorkRequired(bnAvg, pindexLast->GetMedianTimePast(), pindexFirst->GetMedianTimePast(), params);
 }
 
-//Orig Zcash work calculation
 unsigned int ZC_CalculateNextWorkRequired(arith_uint256 bnAvg,
                                        int64_t nLastBlockTime, int64_t nFirstBlockTime,
                                        const Consensus::Params& params)
@@ -171,9 +242,6 @@ unsigned int ZC_CalculateNextWorkRequired(arith_uint256 bnAvg,
     return bnNew.GetCompact();
 }
 
-
-
-
 bool CheckEquihashSolution(const CBlockHeader *pblock, const CChainParams& params)
 {
     //Set parameters N,K from solution size. Filtering of valid parameters
@@ -182,6 +250,7 @@ bool CheckEquihashSolution(const CBlockHeader *pblock, const CChainParams& param
     size_t nSolSize = pblock->nSolution.size();
     switch (nSolSize){
         case 1344: n=200; k=9; break;
+        case 400:  n=192; k=7; break;
         case 100:  n=144; k=5; break;
         case 68:   n=96;  k=5; break;
         case 36:   n=48;  k=5; break;
@@ -190,11 +259,14 @@ bool CheckEquihashSolution(const CBlockHeader *pblock, const CChainParams& param
 
     LogPrint("pow", "selected n,k : %d, %d \n", n,k);
 
-    //need to put block height param switching code here
-
+    // block time is more convenient to use than block height, we can read it from the block header
+    uint32_t block_time = pblock->nTime;
+    
     // Hash state
     crypto_generichash_blake2b_state state;
-    EhInitialiseState(n, k, state);
+    
+    // EhInitialiseState(n, k, state); // obsolete, we need to vary personalization string depending on block height/time
+    EhInitialiseStateEx(n, k, state, block_time);
 
     // I = the block header minus nonce and solution.
     CEquihashInput I{*pblock};
@@ -205,14 +277,6 @@ bool CheckEquihashSolution(const CBlockHeader *pblock, const CChainParams& param
 
     // H(I||V||...
     crypto_generichash_blake2b_update(&state, (unsigned char*)&ss[0], ss.size());
-
-    #ifdef ENABLE_RUST
-    // Ensure that our Rust interactions are working in production builds. This is
-    // temporary and should be removed.
-    {
-        assert(librustzcash_xor(0x0f0f0f0f0f0f0f0f, 0x1111111111111111) == 0x1e1e1e1e1e1e1e1e);
-    }
-    #endif // ENABLE_RUST
 
     bool isValid;
     EhIsValidSolution(n, k, state, pblock->nSolution, isValid);

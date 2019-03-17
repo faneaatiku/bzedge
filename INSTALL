@@ -1,5 +1,5 @@
-Building BitcoinZ
+Building Zcash
 
-See the BitcoinZ github wiki (https://github.com/btcz/bitcoinz/wiki) for instructions on building bitcoinzd,
+See the Zcash github wiki (https://github.com/zcash/zcash/wiki) for instructions on building zcashd,
 the intended-for-services, no-graphical-interface, reference
-implementation of BitcoinZ.
+implementation of Zcash.

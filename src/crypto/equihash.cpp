@@ -19,6 +19,7 @@
 #include "compat/endian.h"
 #include "crypto/equihash.h"
 #include "util.h"
+#include "chainparams.h"
 
 #include <algorithm>
 #include <iostream>
@@ -26,18 +27,67 @@
 
 #include <boost/optional.hpp>
 
-EhSolverCancelledException solver_cancelled;
+static EhSolverCancelledException solver_cancelled;
 
+// obsolete, replaced by InitialiseStateEx
+/*
 template<unsigned int N, unsigned int K>
 int Equihash<N,K>::InitialiseState(eh_HashState& base_state)
 {
+    const CChainParams& chainParams = Params();
+    
+    LogPrintf("CURRENT bze_pers_startblock = %d\n", chainParams.get_bze_pers_start());
     uint32_t le_N = htole32(N);
     uint32_t le_K = htole32(K);
     unsigned char personalization[crypto_generichash_blake2b_PERSONALBYTES] = {};
     if(N==144 && K==5)
-        memcpy(personalization, "BitcoinZ", 8);
+    {
+		memcpy(personalization, "BitcoinZ", 8);
+		LogPrintf("PERSONALIZATION STRING: BitcoinZ\n");
+	}        
     else
-        memcpy(personalization, "ZcashPoW", 8);
+    {
+		memcpy(personalization, "ZcashPoW", 8);
+		LogPrintf("PERSONALIZATION STRING: ZcashPoW\n");
+	}   
+    memcpy(personalization+8,  &le_N, 4);
+    memcpy(personalization+12, &le_K, 4);
+    return crypto_generichash_blake2b_init_salt_personal(&base_state,
+                                                         NULL, 0, // No key.
+                                                         (512/N)*N/8,
+                                                         NULL,    // No salt.
+                                                         personalization);
+}
+*/
+
+template<unsigned int N, unsigned int K>
+int Equihash<N,K>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time)
+{
+    const CChainParams& chainParams = Params();
+    
+    LogPrint("pow", "CURRENT bze_pers_start_blocktime = %d\n", chainParams.get_bze_pers_start());
+    LogPrint("pow", "CURRENT block_time = %d\n", block_time);
+    uint32_t le_N = htole32(N);
+    uint32_t le_K = htole32(K);
+    unsigned char personalization[crypto_generichash_blake2b_PERSONALBYTES] = {};
+    if(N==144 && K==5)
+    {
+		if (block_time < chainParams.get_bze_pers_start())
+		{
+			memcpy(personalization, "BitcoinZ", 8);
+			LogPrint("pow", "PERSONALIZATION STRING: BitcoinZ\n");
+		}
+		else
+		{
+			memcpy(personalization, "BZEZhash", 8);
+			LogPrint("pow", "PERSONALIZATION STRING: BZEZhash\n");
+		}
+	}        
+    else
+    {
+		memcpy(personalization, "ZcashPoW", 8);
+		LogPrint("pow", "PERSONALIZATION STRING: ZcashPoW\n");
+	}   
     memcpy(personalization+8,  &le_N, 4);
     memcpy(personalization+12, &le_K, 4);
     return crypto_generichash_blake2b_init_salt_personal(&base_state,
@@ -771,7 +821,9 @@ bool Equihash<N,K>::IsValidSolution(const eh_HashState& base_state, std::vector<
 }
 
 // Explicit instantiations for Equihash<96,3>
-template int Equihash<96,3>::InitialiseState(eh_HashState& base_state);
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<96,3>::InitialiseState(eh_HashState& base_state);
+template int Equihash<96,3>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
 #ifdef ENABLE_MINING
 template bool Equihash<96,3>::BasicSolve(const eh_HashState& base_state,
                                          const std::function<bool(std::vector<unsigned char>)> validBlock,
@@ -783,7 +835,9 @@ template bool Equihash<96,3>::OptimisedSolve(const eh_HashState& base_state,
 template bool Equihash<96,3>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
 // Explicit instantiations for Equihash<144,5>
-template int Equihash<144,5>::InitialiseState(eh_HashState& base_state);
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<144,5>::InitialiseState(eh_HashState& base_state);
+template int Equihash<144,5>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
 #ifdef ENABLE_MINING
 template bool Equihash<144,5>::BasicSolve(const eh_HashState& base_state,
                                           const std::function<bool(std::vector<unsigned char>)> validBlock,
@@ -794,9 +848,24 @@ template bool Equihash<144,5>::OptimisedSolve(const eh_HashState& base_state,
 #endif
 template bool Equihash<144,5>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
+// Explicit instantiations for Equihash<192,7>
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<192,7>::InitialiseState(eh_HashState& base_state);
+template int Equihash<192,7>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
+#ifdef ENABLE_MINING
+template bool Equihash<192,7>::BasicSolve(const eh_HashState& base_state,
+                                          const std::function<bool(std::vector<unsigned char>)> validBlock,
+                                          const std::function<bool(EhSolverCancelCheck)> cancelled);
+template bool Equihash<192,7>::OptimisedSolve(const eh_HashState& base_state,
+                                              const std::function<bool(std::vector<unsigned char>)> validBlock,
+                                              const std::function<bool(EhSolverCancelCheck)> cancelled);
+#endif
+template bool Equihash<192,7>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
 // Explicit instantiations for Equihash<200,9>
-template int Equihash<200,9>::InitialiseState(eh_HashState& base_state);
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<200,9>::InitialiseState(eh_HashState& base_state);
+template int Equihash<200,9>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
 #ifdef ENABLE_MINING
 template bool Equihash<200,9>::BasicSolve(const eh_HashState& base_state,
                                           const std::function<bool(std::vector<unsigned char>)> validBlock,
@@ -808,7 +877,9 @@ template bool Equihash<200,9>::OptimisedSolve(const eh_HashState& base_state,
 template bool Equihash<200,9>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
 // Explicit instantiations for Equihash<96,5>
-template int Equihash<96,5>::InitialiseState(eh_HashState& base_state);
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<96,5>::InitialiseState(eh_HashState& base_state);
+template int Equihash<96,5>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
 #ifdef ENABLE_MINING
 template bool Equihash<96,5>::BasicSolve(const eh_HashState& base_state,
                                          const std::function<bool(std::vector<unsigned char>)> validBlock,
@@ -820,7 +891,9 @@ template bool Equihash<96,5>::OptimisedSolve(const eh_HashState& base_state,
 template bool Equihash<96,5>::IsValidSolution(const eh_HashState& base_state, std::vector<unsigned char> soln);
 
 // Explicit instantiations for Equihash<48,5>
-template int Equihash<48,5>::InitialiseState(eh_HashState& base_state);
+// obsolete, replaced by InitialiseStateEx
+// template int Equihash<48,5>::InitialiseState(eh_HashState& base_state);
+template int Equihash<48,5>::InitialiseStateEx(eh_HashState& base_state, uint32_t block_time);
 #ifdef ENABLE_MINING
 template bool Equihash<48,5>::BasicSolve(const eh_HashState& base_state,
                                          const std::function<bool(std::vector<unsigned char>)> validBlock,

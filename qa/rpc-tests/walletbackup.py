@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # Copyright (c) 2014 The Bitcoin Core developers
 # Distributed under the MIT software license, see the accompanying
 # file COPYING or http://www.opensource.org/licenses/mit-license.php.
@@ -32,6 +32,8 @@ confirm 1/2/3/4 balances are same as before.
 Shutdown again, restore using importwallet,
 and confirm again balances are correct.
 """
+
+import sys; assert sys.version_info < (3,), ur"This script does not run under Python 3. Please use Python 2.7.x."
 
 from test_framework.test_framework import BitcoinTestFramework
 from test_framework.authproxy import JSONRPCException
@@ -123,9 +125,9 @@ class WalletBackupTest(BitcoinTestFramework):
         self.nodes[3].generate(100)
         sync_blocks(self.nodes)
 
-        assert_equal(self.nodes[0].getbalance(), 12500)
-        assert_equal(self.nodes[1].getbalance(), 12500)
-        assert_equal(self.nodes[2].getbalance(), 12500)
+        assert_equal(self.nodes[0].getbalance(), 10)
+        assert_equal(self.nodes[1].getbalance(), 10)
+        assert_equal(self.nodes[2].getbalance(), 10)
         assert_equal(self.nodes[3].getbalance(), 0)
 
         logging.info("Creating transactions")
@@ -166,7 +168,7 @@ class WalletBackupTest(BitcoinTestFramework):
 
         # At this point, there are 214 blocks (103 for setup, then 10 rounds, then 101.)
         # 114 are mature, so the sum of all wallets should be 114 * 10 = 1140.
-        assert_equal(total, 1425000)
+        assert_equal(total, 1140)
 
         ##
         # Test restoring spender wallets from backups
